@@ -1,0 +1,4 @@
+bucket  = "riddhi-terraform-state-files"
+key     = "riddi-gsp/prod/terraform.tfstate"
+region  = "ap-south-1"
+encrypt = true

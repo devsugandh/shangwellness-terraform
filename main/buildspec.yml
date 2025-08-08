@@ -1,0 +1,63 @@
+version: 0.2
+
+env:
+  variables:
+    AWS_REGION: ap-south-1
+    AWS_ACCOUNT_ID: 669097061043
+    IMAGE_REPO_NAME: shangwellness-prod
+    CONTAINER_NAME: shangwellness-app
+    ECR_URI: 669097061043.dkr.ecr.ap-south-1.amazonaws.com/shangwellness-prod
+
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - echo "Installing required tools..."
+      - yum install -y awscli unzip zip git docker
+      - echo "Logging into Amazon ECR..."
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ECR_URI
+
+  pre_build:
+    commands:
+      - echo "Downloading .env and Docker-related files from S3..."
+      - aws s3 cp s3://shangwellness-build-assets/prod-assets/.env .
+      - aws s3 cp s3://shangwellness-build-assets/prod-assets/Dockerfile .
+      - aws s3 cp s3://shangwellness-build-assets/prod-assets/appspec.yml .
+      - aws s3 cp s3://shangwellness-build-assets/prod-assets/taskdef.json .
+      - aws s3 cp s3://shangwellness-build-assets/prod-assets/healthcheck.sh .
+      - aws s3 cp s3://shangwellness-build-assets/prod-assets/db.php .
+      - mv db.php public/
+      - mkdir -p docker
+      - aws s3 cp s3://shangwellness-build-assets/prod-assets/docker/ docker/ --recursive
+      - echo "Setting image tag from Git commit hash..."
+      - IMAGE_TAG=$(echo ${CODEBUILD_RESOLVED_SOURCE_VERSION:-latest} | cut -c1-7)
+      - echo $IMAGE_TAG > imageTag.txt
+
+  build:
+    commands:
+      - IMAGE_TAG=$(cat imageTag.txt)
+      - echo "Building Docker image..."
+      - docker build -t $ECR_URI:$IMAGE_TAG .
+      - echo "Creating imageDetail.json..."
+      - printf '{"ImageURI":"%s"}' $ECR_URI:$IMAGE_TAG > imageDetail.json
+
+  post_build:
+    commands:
+      - IMAGE_TAG=$(cat imageTag.txt)
+      - echo "Pushing Docker image to Amazon ECR..."
+      - docker push $ECR_URI:$IMAGE_TAG
+      - echo "Updating task definition with new image..."
+      - sed -i "s|<PROD1>|$ECR_URI:$IMAGE_TAG|g" taskdef.json
+      - echo "Generating imagedefinitions.json..."
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$ECR_URI:$IMAGE_TAG" > imagedefinitions.json
+      - echo "Checking ECS task definition..."
+      - aws ecs describe-task-definition --task-definition shangwellness-prod-task --query 'taskDefinition.taskDefinitionArn' --output text
+
+artifacts:
+  files:
+    - appspec.yml
+    - taskdef.json
+    - imageDetail.json
+    - imagedefinitions.json
+  discard-paths: yes 

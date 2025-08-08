@@ -1,0 +1,135 @@
+{
+    "taskDefinitionArn": "arn:aws:ecs:ap-south-1:669097061043:task-definition/shangwellness-prod-task:15",
+    "containerDefinitions": [
+        {
+            "name": "shangwellness-app",
+            "image": "<PROD1>",
+            "cpu": 0,
+            "portMappings": [
+                {
+                    "containerPort": 80,
+                    "hostPort": 80,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "environment": [
+                {
+                    "name": "DB_NAME",
+                    "value": "shangwellness_prod"
+                },
+                {
+                    "name": "APP_ENV",
+                    "value": "prod"
+                },
+                {
+                    "name": "DB_USERNAME",
+                    "value": "admin"
+                },
+                {
+                    "name": "DB_HOST",
+                    "value": "shangwellness-prod-aurora.cluster-cj8iwom2850v.ap-south-1.rds.amazonaws.com"
+                },
+                {
+                    "name": "DB_PASSWORD",
+                    "value": "n78vbBTeqSFpVg5o"
+                }
+            ],
+            "mountPoints": [],
+            "volumesFrom": [],
+            "secrets": [],
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/prod/web-app",
+                    "awslogs-region": "ap-south-1",
+                    "awslogs-stream-prefix": "ecs"
+                }
+            },
+            "healthCheck": {
+                "command": [
+                    "CMD-SHELL",
+                    "curl -f http://localhost:80/healthcheck || exit 1"
+                ],
+                "interval": 30,
+                "timeout": 5,
+                "retries": 3,
+                "startPeriod": 60
+            },
+            "systemControls": []
+        }
+    ],
+    "family": "shangwellness-prod-task",
+    "taskRoleArn": "arn:aws:iam::669097061043:role/shangwellness-prod-ecs-task-role",
+    "executionRoleArn": "arn:aws:iam::669097061043:role/shangwellness-prod-ecs-task-execution-role",
+    "networkMode": "awsvpc",
+    "revision": 15,
+    "volumes": [],
+    "status": "ACTIVE",
+    "requiresAttributes": [
+        {
+            "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+        },
+        {
+            "name": "ecs.capability.execution-role-awslogs"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.ecr-auth"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.task-iam-role"
+        },
+        {
+            "name": "ecs.capability.container-health-check"
+        },
+        {
+            "name": "ecs.capability.execution-role-ecr-pull"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+        },
+        {
+            "name": "ecs.capability.task-eni"
+        },
+        {
+            "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+        }
+    ],
+    "placementConstraints": [],
+    "compatibilities": [
+        "EC2",
+        "FARGATE"
+    ],
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "512",
+    "memory": "1024",
+    "registeredAt": "2025-08-08T04:52:14.334Z",
+    "registeredBy": "arn:aws:iam::669097061043:user/sugandh",
+    "tags": [
+        {
+            "key": "Project",
+            "value": "web-app"
+        },
+        {
+            "key": "Environment",
+            "value": "prod"
+        },
+        {
+            "key": "Owner",
+            "value": "devops-team"
+        },
+        {
+            "key": "ManagedBy",
+            "value": "terraform"
+        },
+        {
+            "key": "Application",
+            "value": "web"
+        }
+    ]
+}

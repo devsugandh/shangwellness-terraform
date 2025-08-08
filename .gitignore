@@ -1,0 +1,56 @@
+# Terraform
+*.tfstate
+*.tfstate.*
+.terraform/
+.terraform.lock.hcl
+terraform.tfstate.backup
+.terraform.tfstate.lock.info
+
+# Terraform variables (may contain secrets)
+*.auto.tfvars
+*.auto.tfvars.json
+secrets.tfvars
+
+# Logs
+*.log
+logs/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# AWS credentials (if accidentally committed)
+.aws/
+credentials
+config
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.staging
+
+# Build artifacts
+build/
+dist/
+*.zip
+*.tar.gz
+
