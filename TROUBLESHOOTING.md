@@ -2,9 +2,9 @@
 
 ## 🚨 Emergency Contacts
 
-- **DevOps Team**: devops-team@company.com
+- **DevOps Team**: devops@hipster-inc.com | sugandh@hipster-inc.com | shashank@hipster-inc.com
 - **AWS Support**: Available through AWS Console
-- **Emergency Contact**: +1-XXX-XXX-XXXX
+
 
 ## 📋 Quick Health Check Commands
 
@@ -16,7 +16,7 @@ aws ecs describe-services \
   --region ap-south-1
 
 # Check application health
-curl -I http://shangwellness-prod-alb-1303215459.ap-south-1.elb.amazonaws.com/healthcheck
+curl -I http://dns.com/healthcheck
 
 # Check database status
 aws rds describe-db-clusters \
